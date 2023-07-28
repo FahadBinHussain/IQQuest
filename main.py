@@ -16,7 +16,7 @@ for question in question_data:
     new_question = Question(question_text, all_answers, question_answer)
     question_bank.append(new_question)
 
-quiz = QuizBrain(question_bank)
+quiz = QuizBrain(question_bank, max_questions=10)
 
 while quiz.still_has_questions():
     quiz.next_question()
