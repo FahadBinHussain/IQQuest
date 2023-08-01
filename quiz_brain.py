@@ -20,7 +20,7 @@ class QuizBrain:
         self.check_answer(user_answer, current_question.answer)
 
     def check_answer(self, user_answer, correct_answer):
-        user_answer = int(user_answer) - 1  # Subtract 1 to get index of answer choice
+        user_answer = int(user_answer) - 1  
         if user_answer == self.question_list[self.question_number-1].choices.index(correct_answer):
             self.score += 1
             print("You got it right!")
