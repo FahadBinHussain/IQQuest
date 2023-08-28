@@ -1,23 +1,28 @@
-class User:
-    ALLOWED_USER_TYPES = ['school', 'college', 'university']
-
-    def __init__(self, name, age, email, address, phone_number, user_type, category):
+class Person:
+    def __init__(self, name, age, email, address, phone_number):
         self.name = name
         self.age = age
         self.email = email
         self.address = address
         self.phone_number = phone_number
+        
+class User(Person):
+    ALLOWED_USER_TYPES = ['school', 'college', 'university']
+    total_users = 0
+
+    def __init__(self, name, age, email, address, phone_number, user_type, category):
+        super().__init__(name, age, email, address, phone_number)
         self.user_type = user_type
         self.category = category
         self.quizzes_taken = 0
         self.total_score = 0
         self.highest_score = 0
+        User.total_users += 1
 
-    @staticmethod
-    def validate_user_type(user_type):
-        if user_type not in User.ALLOWED_USER_TYPES:
-            raise ValueError("Invalid user_type. Allowed values are school, college, university.")
-
+    @classmethod
+    def get_total_users(cls):
+        return cls.total_users
+    
     def update_user_type(self, user_type):
         User.validate_user_type(user_type)
         self.user_type = user_type

@@ -4,4 +4,3 @@ class Question:
         self.text = q_text
         self.choices = answer_choices
         self.answer = q_answer
-        

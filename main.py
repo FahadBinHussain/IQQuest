@@ -1,13 +1,10 @@
-import requests
 import yaml
-from user_model import User
-from question_model import Question
-from quiz_brain import QuizBrain
 
-# Fetch trivia questions from the Open Trivia Database API
-response = requests.get("https://opentdb.com/api.php?amount=50&category=18&type=multiple")
-response.raise_for_status()  # Raise an exception if request fails
-question_data = response.json()["results"]
+from input_service import InputService
+from api_service import ApiService
+from user_model import User
+from quiz_runner import Quiz
+from question_model import Question
 
 try:
     # Try to open the existing users.yml file
@@ -18,63 +15,70 @@ except FileNotFoundError:
     user_data = {'users': []}
 
 while True:
-    # Ask the user for their information
-    name = input("Enter your name: ")
-    if name.lower() == 'exit':
-        break
-
-    # Ask the user for their information
-    age = input("Enter your age: ")
-    email = input("Enter your email: ")
-    address = input("Enter your address: ")
-    phone_number = input("Enter your phone number: ")
-
-    # Validate and prompt for user type until a valid value is provided
-    while True:
-        user_type = input("Enter your user type: ")
-        try:
-            User.validate_user_type(user_type)
+    try:
+        # Ask the user for their name
+        name = InputService.get_name()
+        if name.lower() == 'exit':
             break
-        except ValueError as e:
-            print(e)
 
-    category = input("Enter your category: ")
+        # Check if user already exists in the list
+        user_exists = False
+        for user in user_data['users']:
+            if user['name'] == name:
+                user_exists = True
+                new_user = user
+                input("Your information was previously saved in the system. Press any key to continue.")
+                break
 
-    # Create a new user dictionary
-    new_user = {
-        'name': name,
-        'age': age,
-        'email': email,
-        'address': address,
-        'phone_number': phone_number,
-        'user_type': user_type,
-        'category': category
-    }
+        if not user_exists:
+            # Ask the user for their information
+            age = InputService.get_age()
+            email = InputService.get_email()
+            address = InputService.get_address()
+            phone_number = InputService.get_phone_number()
+            user_type = InputService.get_user_type()
+            question_type = InputService.get_question_type()
 
-    # Append the new user dictionary to the existing user data
-    user_data['users'].append(new_user)
+            new_user = {
+                'name': name,
+                'age': age,
+                'email': email,
+                'address': address,
+                'phone_number': phone_number,
+                'user_type': user_type,
+                'quizzes': []
+            }
+            user_data['users'].append(new_user)
 
-    # Save the updated user information back to the YAML file
-    with open('users.yml', 'w') as file:
-        yaml.dump(user_data, file)
+            # Ask for the category regardless of whether the user is new or existing
+            category = InputService.get_category()
 
-    user = User(name, age, email, address, phone_number, user_type, category)
+        else:
+            #access category from the yml file
+            new_user = user_data['users'][0]
+            age = new_user['age']
+            email = new_user['email']
+            address = new_user['address']
+            phone_number = new_user['phone_number']
+            user_type = new_user['user_type']
 
-    question_bank = []
-    for question in question_data:
-        question_text = question["question"]
-        question_answer = question["correct_answer"]
-        incorrect_answers = question["incorrect_answers"]
-        all_answers = incorrect_answers + [question_answer]
-        new_question = Question(question_text, all_answers, question_answer)
-        question_bank.append(new_question)
+            # Ask for the category regardless of whether the user is new or existing
+            category = InputService.get_category()
+            question_type = InputService.get_question_type()
 
-    quiz = QuizBrain(question_bank, max_questions=2)
+        api_service = ApiService()
+        question_data = api_service.fetch_trivia_questions(category, question_type)
 
-    while quiz.still_has_questions():
-        quiz.next_question()
+        question_data = [Question(q["question"], q["incorrect_answers"] + [q["correct_answer"]], q["correct_answer"]) for q in question_data]
+        user = User(name, age, email, address, phone_number, user_type, category)
 
-        user.update_total_score(quiz.score)
+        quiz = Quiz(user, question_data)
+        quiz_result = quiz.run()
+        new_user['quizzes'].append(quiz_result)
 
-    print("You've completed the quiz")
-    print(f"Your final score was: {quiz.score}/{quiz.question_number}")
+        # Save the updated user information back to the YAML file
+        with open('users.yml', 'w') as file:
+            yaml.dump(user_data, file, sort_keys=False)
+
+    except Exception as e:
+        print(e)

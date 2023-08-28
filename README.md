@@ -1,10 +1,12 @@
 # IQQuest
 
-This project is a Python-based quiz game that fetches trivia questions from the Open Trivia Database API and tests the user's knowledge of computer science.
+This Python application interacts with users to get their information, fetch trivia questions from an API based on their preferences, run a quiz for them, and store their information including quiz results in a YAML file.
 
 # Dependencies
 
 * requests
+* PyYAML
+* phonenumbers
 
 # How to Use
 
@@ -22,14 +24,49 @@ You're all set.
 
 3. Run `python3 main.py` to start the Quest!
 
-## How the Quiz Game works
+## Usage
+After running the program, follow the prompts in the terminal to input your information and answer trivia questions.
 
-* This quiz game works by fetching trivia questions from the Open Trivia Database API and testing the user's knowledge of computer science.
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-* When the game starts, it makes an HTTP GET request to the Open Trivia Database API endpoint to fetch 50 multiple-choice trivia questions related to computer science. It then creates a `Question` object for each question, and a list of `Question` objects is passed to the `QuizBrain` class.
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
 
-* The `QuizBrain` class keeps track of the user's score and the number of questions answered. It prompts the user to select an answer for each question and validates the answer using the `check_answer` method. If the user's answer is correct, the score is incremented. The `QuizBrain` class continues to prompt the user with questions until there are no questions left.
+## How the Quiz Game Works
 
-* At the end of the quiz, the user's score is displayed along with the number of questions answered.
+The quiz game is an interactive Python application that allows users to participate in trivia quizzes. The quizzes are generated based on the user's preferences and fetched from the Open Trivia Database API. The application validates user inputs, keeps track of user scores, and stores user information and quiz results in a YAML file.
 
-* The code uses the `requests` library to make HTTP requests and the `json` library to parse the JSON response from the Open Trivia Database API. The `QuizBrain` and `Question` classes are defined in separate Python modules called `quiz_brain.py` and `question_model.py`, respectively. The `main.py` file imports these modules and creates an instance of the `QuizBrain` class to run the quiz game.
+### User Interaction
+
+When a user starts the game, they are asked to enter their personal information and preferences for the trivia quiz. If the user's information has been saved from a previous game, they can continue with the saved information. Otherwise, new users are asked to input their name, age, email, address, phone number, user type, and preferred category and type of questions for the quiz. The `InputService` class handles user inputs and the `Validator` class validates these inputs.
+
+### Validation Process
+
+The `Validator` class validates user inputs. It checks if the user's name, age, email, address, phone number, user type, category, and question type are in the correct format and within the allowed values. 
+
+### Quiz Generation
+
+The application fetches trivia questions from the Open Trivia Database API based on the user's preferred category and question type. These questions are represented by the `Question` class, which includes the question text, answer choices, and the correct answer. 
+
+### Running the Quiz
+
+Once all user inputs are validated and the questions are fetched, a `QuizBrain` object is created. The `QuizBrain` class handles the logic of the quiz game, such as displaying the next question, checking the user's answer, and updating the user's score. The quiz is run until all questions are answered or skipped.
+
+### User Scoring
+
+After the quiz is finished, the user's total score and the number of quizzes they have taken are updated. The `User` class, which represents a user of the quiz game, keeps track of these statistics.
+
+### Quiz Results
+
+The results of the quiz are returned as a dictionary, which includes the date and time the quiz was taken, the total number of questions, the number of correct and incorrect answers, the number of unanswered questions, and the category of the quiz.
+
+### Data Storage
+
+The user's information and quiz results are then saved back to a YAML file for future reference. 
+
+### Error Handling
+
+The application uses a session with a retry mechanism for making requests to the API, which means it will retry failed requests a certain number of times. This is useful in cases where the API might be temporarily unavailable or responding with error status codes.
+
+The quiz game provides a fun and interactive way for users to test their trivia knowledge. It offers flexibility in terms of the type and category of questions, and it ensures a smooth user experience by validating user inputs and handling errors effectively.
