@@ -2,6 +2,10 @@
 
 [![Clone this repo](https://img.shields.io/badge/Clone-this_repo-brightgreen.svg)](https://github.com/FahadBinHussain/IQQuest)
 
+<br>
+
+[![Run on Replit](https://replit.com/badge/github/FahadBinHussain/IQQuest)](https://replit.com/@FahadBin9/IQQuest?v=1)
+
 This Python application interacts with users to get their information, fetch trivia questions from an API based on their preferences, run a quiz for them, and store their information including quiz results in a YAML file.
 
 # Dependencies
