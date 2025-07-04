@@ -1,5 +1,9 @@
 # IQQuest
 
+<img src="https://wakapi-qt1b.onrender.com/api/badge/fahad/interval:any/project:IQQuest" 
+     alt="Wakapi Time Tracking" 
+     title="Spent more than that amount of time spent on this project">
+
 [![Clone this repo](https://img.shields.io/badge/Clone-this_repo-brightgreen.svg)](https://github.com/FahadBinHussain/IQQuest)
 
 This Python application interacts with users to get their information, fetch trivia questions from an API based on their preferences, run a quiz for them, and store their information including quiz results in a YAML file.
